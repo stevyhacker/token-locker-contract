@@ -1,5 +1,7 @@
 import { config as dotenvConfig } from "dotenv";
 import { resolve } from "path";
+import "@nomiclabs/hardhat-etherscan";
+
 dotenvConfig({ path: resolve(__dirname, "./.env") });
 
 import { HardhatUserConfig } from "hardhat/config";
@@ -36,6 +38,13 @@ if (!process.env.INFURA_API_KEY) {
   infuraApiKey = process.env.INFURA_API_KEY;
 }
 
+let etherScanApiKey: string;
+if (!process.env.ETHERSCAN_API_KEY) {
+  throw new Error("Please set your ETHERSCAN_API_KEY in a .env file");
+} else {
+  etherScanApiKey = process.env.ETHERSCAN_API_KEY;
+}
+
 function createTestnetConfig(network: keyof typeof chainIds): NetworkUserConfig {
   const url: string = "https://" + network + ".infura.io/v3/" + infuraApiKey;
   return {
@@ -63,6 +72,11 @@ const config: HardhatUserConfig = {
     kovan: createTestnetConfig("kovan"),
     rinkeby: createTestnetConfig("rinkeby"),
     ropsten: createTestnetConfig("ropsten"),
+  },
+  etherscan: {
+    // Your API key for Etherscan
+    // Obtain one at https://etherscan.io/
+    apiKey: etherScanApiKey
   },
   paths: {
     artifacts: "./artifacts",
